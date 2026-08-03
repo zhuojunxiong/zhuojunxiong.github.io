@@ -1,0 +1,36 @@
+---
+import { siteConfig } from "../site.config";
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-signature">
+      <span class="footer-mark" aria-hidden="true">L</span>
+      <div>
+        <strong>{siteConfig.name}</strong>
+        <p>{siteConfig.tagline}</p>
+      </div>
+    </div>
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <a href="/tech/">Technology</a>
+      <a href="/photography/">Photography</a>
+      <a href="/articles/">Essays</a>
+      <a href="/about/">About</a>
+    </nav>
+    <div class="footer-meta">
+      <small class="footer-license">
+        <span
+          >Photography <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+            >CC BY-NC-ND 4.0</a
+          ></span
+        >
+        <span
+          >Writing <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a></span
+        >
+        <span>Code <a href={`${siteConfig.github}/blob/main/LICENSE`}>MIT</a></span>
+      </small>
+      <a href={siteConfig.github} rel="me">GitHub</a>
+      <span>© {new Date().getFullYear()} {siteConfig.name}</span>
+    </div>
+  </div>
+</footer>

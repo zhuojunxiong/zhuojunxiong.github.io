@@ -1,0 +1,107 @@
+---
+import { siteConfig } from "../site.config";
+
+const nav = [
+  { href: "/", label: "Home", key: "home" },
+  { href: "/tech/", label: "Technology", key: "tech" },
+  { href: "/photography/", label: "Photography", key: "photography" },
+  { href: "/articles/", label: "Essays", key: "articles" },
+  { href: "/about/", label: "About", key: "about" },
+];
+
+const { current = "" } = Astro.props;
+---
+
+<header class="site-header">
+  <nav class="nav" aria-label="Primary navigation">
+    <a class="brand" href="/">
+      <span class="brand-mark" aria-hidden="true">L</span>
+      <span class="brand-name">{siteConfig.name}</span>
+    </a>
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      aria-haspopup="true"
+    >
+      <span class="nav-toggle-line"></span>
+      <span class="nav-toggle-line"></span>
+      <span class="sr-only">Open navigation menu</span>
+    </button>
+    <ul class="nav-list" id="site-menu">
+      {
+        nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={current === item.key ? "page" : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector(".nav-toggle");
+  const menu = document.querySelector("#site-menu");
+  const menuLabel = toggle?.querySelector(".sr-only");
+  const links = Array.from(document.querySelectorAll("#site-menu a")).filter(
+    (link): link is HTMLElement => link instanceof HTMLElement,
+  );
+  const pageRegions = [document.querySelector("main"), document.querySelector("footer")].filter(
+    (region): region is HTMLElement => region instanceof HTMLElement,
+  );
+
+  function setMenuState(isOpen: boolean, restoreFocus = false) {
+    menu?.classList.toggle("is-open", isOpen);
+    document.body.classList.toggle("menu-open", isOpen);
+    toggle?.setAttribute("aria-expanded", String(isOpen));
+    if (menuLabel)
+      menuLabel.textContent = isOpen ? "Close navigation menu" : "Open navigation menu";
+    pageRegions.forEach((region) => {
+      if (isOpen) region.setAttribute("inert", "");
+      else region.removeAttribute("inert");
+    });
+    if (isOpen) window.requestAnimationFrame(() => links[0]?.focus());
+    if (!isOpen && restoreFocus && toggle instanceof HTMLElement) toggle.focus();
+  }
+
+  toggle?.addEventListener("click", () => {
+    const isOpen = toggle.getAttribute("aria-expanded") !== "true";
+    setMenuState(isOpen);
+  });
+
+  links.forEach((link) => link.addEventListener("click", () => setMenuState(false)));
+
+  document.addEventListener("keydown", (event) => {
+    if (toggle?.getAttribute("aria-expanded") !== "true") return;
+    if (event.key === "Escape") {
+      setMenuState(false, true);
+      return;
+    }
+    if (event.key !== "Tab") return;
+
+    const focusable = [toggle, ...links].filter(
+      (item): item is HTMLElement => item instanceof HTMLElement,
+    );
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last?.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first?.focus();
+    }
+  });
+
+  const header = document.querySelector(".site-header");
+  const syncHeader = () => header?.classList.toggle("is-scrolled", window.scrollY > 16);
+  syncHeader();
+  window.addEventListener("scroll", syncHeader, { passive: true });
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 900) setMenuState(false);
+  });
+</script>

@@ -1,0 +1,19 @@
+---
+import { getCollection, render } from "astro:content";
+import ArticleLayout from "../../layouts/ArticleLayout.astro";
+import { byDateDesc, isPublished, neighbors, slugFromId } from "../../utils/content";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("articles")).filter(isPublished).sort(byDateDesc);
+  return posts.map((entry) => {
+    const slug = slugFromId(entry.id);
+    const { previous, next } = neighbors(posts, slug);
+    return { params: { slug }, props: { entry, previous, next } };
+  });
+}
+
+const { entry, previous, next } = Astro.props;
+const rendered = await render(entry);
+---
+
+<ArticleLayout entry={entry} Content={rendered.Content} previous={previous} next={next} />

@@ -1,0 +1,117 @@
+{
+  "title": "Jiuzhaigou in Winter",
+  "description": "A first photographic collection: snow among lakes, forests, streams, and mountains, where winter reveals a quieter shade of blue.",
+  "date": "2026-07-29",
+  "location": "Jiuzhaigou, Sichuan",
+  "cover": "/images/photography/winter-jiuzhaigou/01.jpg",
+  "coverAlt": "Snow falling between a blue-green lake and a winter forest",
+  "featured": true,
+  "draft": false,
+  "photos": [
+    {
+      "src": "/images/photography/winter-jiuzhaigou/01.jpg",
+      "alt": "Snow falling over a blue-green lake beside winter trees and a wooden walkway",
+      "caption": "Snow enters the lake and settles among the trees and boards.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/02.jpg",
+      "alt": "A swift stream passing between rocks in a dark forest",
+      "caption": "The voice of water keeps winter from becoming wholly still.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/03.jpg",
+      "alt": "Water plants and a pale shore visible beneath clear lake water",
+      "caption": "In the shallows, transparency slowly deepens into blue-green.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/04.jpg",
+      "alt": "A moss-covered branch crossing the foreground of a conifer forest",
+      "caption": "Seen closely, the forest reveals a grain of its own.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/05.jpg",
+      "alt": "Submerged rocks of varying depth beneath blue-green water",
+      "caption": "Stones beneath the surface divide the blue into many depths.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/06.jpg",
+      "alt": "Bare branches crossing blue-green lake water and reeds",
+      "caption": "Between bare wood and water lies winter’s lightest colour.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/07.jpg",
+      "alt": "Reeds extending into blue-green water with a dark forest beyond",
+      "caption": "Reeds, water, and forest divide the view into three quiet distances.",
+      "width": 1080,
+      "height": 1620
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/08.jpg",
+      "alt": "Stones beneath clear water beside a pebbled shore",
+      "caption": "The surface softens stone and slows the light.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/09.jpg",
+      "alt": "A clear boundary between white ice and blue-green lake water",
+      "caption": "Between ice and water, a boundary changes almost too slowly to see.",
+      "width": 1080,
+      "height": 1620
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/10.jpg",
+      "alt": "Clear water running between snowy banks and rocks",
+      "caption": "Snow lowers every colour; the stream carries light back in.",
+      "width": 1280,
+      "height": 1708
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/11.jpg",
+      "alt": "Sunlight passing between tall trunks in a winter forest",
+      "caption": "Light descends between the trees and keeps one small clearing bright.",
+      "width": 1080,
+      "height": 1620
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/12.jpg",
+      "alt": "A winter stream descending over tiers of moss-covered rock",
+      "caption": "Even a small fall is enough to set the whole frame in motion.",
+      "width": 1080,
+      "height": 1620
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/13.jpg",
+      "alt": "Snow-covered mountain cliffs beneath a clouded sky",
+      "caption": "The scale of the mountain sends every sound far away.",
+      "width": 1620,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/14.jpg",
+      "alt": "A traditional roof beside snowy travertine pools in winter",
+      "caption": "Snow, shallow pools, and a roof lend winter a human outline.",
+      "width": 1440,
+      "height": 1080
+    },
+    {
+      "src": "/images/photography/winter-jiuzhaigou/15.jpg",
+      "alt": "A snow-covered mountain veiled by cloud at the end of a white valley",
+      "caption": "Partly hidden by cloud, the distant mountain looks more like memory.",
+      "width": 1080,
+      "height": 1620
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import ReadingProgress from "../components/ReadingProgress.astro";
+import { formatDate, slugFromId } from "../utils/content";
+import type { MarkdownHeading } from "astro";
+import type { CollectionEntry } from "astro:content";
+
+const { entry, Content, headings = [], previous, next, related = [] } = Astro.props;
+const typedEntry = entry as CollectionEntry<"tech">;
+const typedHeadings = headings as MarkdownHeading[];
+const typedPrevious = previous as CollectionEntry<"tech"> | undefined;
+const typedNext = next as CollectionEntry<"tech"> | undefined;
+const typedRelated = related as CollectionEntry<"tech">[];
+---
+
+<BaseLayout
+  title={typedEntry.data.title}
+  description={typedEntry.data.description}
+  current="tech"
+  image={typedEntry.data.cover}
+  imageAlt={typedEntry.data.coverAlt}
+  ogType="article"
+  schemaType="TechArticle"
+  publishedDate={typedEntry.data.publishedDate}
+  updatedDate={typedEntry.data.updatedDate}
+>
+  <ReadingProgress />
+  <article class="post-shell">
+    <header class="post-header">
+      <p class="eyebrow">Technical note</p>
+      <h1>{typedEntry.data.title}</h1>
+      <p class="lead">{typedEntry.data.description}</p>
+      <div class="meta">
+        <span>Published {formatDate(typedEntry.data.publishedDate)}</span>
+        {
+          typedEntry.data.updatedDate && (
+            <span>Updated {formatDate(typedEntry.data.updatedDate)}</span>
+          )
+        }
+        {typedEntry.data.difficulty && <span>{typedEntry.data.difficulty}</span>}
+      </div>
+      <div class="tags">
+        {typedEntry.data.tags.map((tag) => <span>{tag}</span>)}
+      </div>
+      {
+        typedEntry.data.cover && (
+          <div class="post-cover">
+            <img
+              src={typedEntry.data.cover}
+              alt={typedEntry.data.coverAlt}
+              loading="eager"
+              decoding="async"
+              fetchpriority="high"
+            />
+          </div>
+        )
+      }
+    </header>
+    <div class:list={["post-body-grid", { "no-toc": typedHeadings.length === 0 }]}>
+      {
+        typedHeadings.length > 0 && (
+          <nav class="table-of-contents" aria-label="Table of contents">
+            <p class="eyebrow">In this note</p>
+            <ol>
+              {typedHeadings
+                .filter((heading) => heading.depth <= 3)
+                .map((heading) => (
+                  <li>
+                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                  </li>
+                ))}
+            </ol>
+          </nav>
+        )
+      }
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+    <footer class="post-license">
+      <p>
+        © {new Date(typedEntry.data.publishedDate).getFullYear()} Liuwuxin. Licensed under <a
+          href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a
+        >: attribution is required, and adaptations must use the same license.
+      </p>
+    </footer>
+    <nav class="post-nav" aria-label="Previous and next technical notes">
+      {
+        typedPrevious ? (
+          <a href={`/tech/${slugFromId(typedPrevious.id)}/`}>
+            Previous
+            <>
+              <br />
+              <strong>{typedPrevious.data.title}</strong>
+            </>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      {
+        typedNext ? (
+          <a href={`/tech/${slugFromId(typedNext.id)}/`}>
+            Next
+            <>
+              <br />
+              <strong>{typedNext.data.title}</strong>
+            </>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+    {
+      typedRelated.length > 0 && (
+        <section class="reading related-reading">
+          <p class="eyebrow">Related notes</p>
+          {typedRelated.map((item) => (
+            <p>
+              <a class="text-link" href={`/tech/${slugFromId(item.id)}/`}>
+                {item.data.title}
+              </a>
+            </p>
+          ))}
+        </section>
+      )
+    }
+  </article>
+  <script>
+    const tocLinks = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(".table-of-contents a"),
+    );
+    const observedHeadings = tocLinks
+      .map((link) => document.getElementById(decodeURIComponent(link.hash.slice(1))))
+      .filter((heading): heading is HTMLElement => heading instanceof HTMLElement);
+
+    function markCurrentHeading(id: string) {
+      tocLinks.forEach((link) => {
+        if (decodeURIComponent(link.hash.slice(1)) === id) {
+          link.setAttribute("aria-current", "location");
+        } else {
+          link.removeAttribute("aria-current");
+        }
+      });
+    }
+
+    const headingObserver = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]?.target.id) markCurrentHeading(visible[0].target.id);
+      },
+      { rootMargin: "-18% 0px -72% 0px" },
+    );
+
+    observedHeadings.forEach((heading) => headingObserver.observe(heading));
+    if (observedHeadings[0]) markCurrentHeading(observedHeadings[0].id);
+  </script>
+</BaseLayout>

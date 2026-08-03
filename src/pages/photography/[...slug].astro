@@ -1,0 +1,204 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, isPublished } from "../../utils/content";
+
+export async function getStaticPaths() {
+  const galleries = (await getCollection("photography")).filter(isPublished);
+  return galleries.map((entry) => ({
+    params: { slug: entry.id.replace(/\.json$/, "") },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<BaseLayout
+  title={entry.data.title}
+  description={entry.data.description}
+  current="photography"
+  image={entry.data.cover}
+  imageAlt={entry.data.coverAlt}
+  ogType="article"
+  schemaType="ImageGallery"
+  publishedDate={entry.data.date}
+>
+  <section class="photo-hero">
+    <img
+      src={entry.data.cover}
+      alt={entry.data.coverAlt}
+      width={entry.data.photos[0]?.width}
+      height={entry.data.photos[0]?.height}
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+    <div class="photo-hero-content">
+      <p class="eyebrow">Photography collection · 01</p>
+      <h1>{entry.data.title}</h1>
+      <p class="lead">{entry.data.description}</p>
+      <div class="meta">
+        <span>{formatDate(entry.data.date)}</span>
+        {entry.data.location && <span>{entry.data.location}</span>}
+        <span>{entry.data.photos.length} photographs</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-inner photo-intro" aria-label="Collection note" data-reveal>
+    <div>
+      <p class="eyebrow">Field note</p>
+      <h2>Snow lowers the voice of the world; water keeps its colour.</h2>
+    </div>
+    <p>
+      The sequence begins at the lake, passes through forest and stream, and ends beneath the
+      mountains. Wide frames preserve the scale of the landscape; vertical frames draw close to
+      bark, ice, and light. Follow the order slowly, or open any photograph for a larger view.
+    </p>
+  </section>
+
+  <section class="section-inner photo-stream" data-photo-viewer aria-label="Photographs">
+    {
+      entry.data.photos.map((photo, index) => {
+        const orientation = photo.height > photo.width ? "is-portrait" : "is-wide";
+        return (
+          <figure class={`photo-frame ${orientation}`} data-reveal>
+            <button
+              class="photo-button"
+              type="button"
+              data-photo-index={index}
+              aria-label={`Enlarge photograph ${index + 1}: ${photo.alt}`}
+            >
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                width={photo.width}
+                height={photo.height}
+                loading={index < 2 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            </button>
+            <figcaption>
+              <span>{photo.caption}</span>
+              <span class="photo-number">
+                {String(index + 1).padStart(2, "0")} / {entry.data.photos.length}
+              </span>
+            </figcaption>
+          </figure>
+        );
+      })
+    }
+  </section>
+
+  <div
+    class="viewer"
+    aria-hidden="true"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Full-screen photograph viewer"
+  >
+    <button class="viewer-close" type="button" aria-label="Close viewer" title="Close">×</button>
+    <button class="viewer-prev" type="button" aria-label="Previous photograph" title="Previous"
+      >‹</button
+    >
+    <img alt="" draggable="false" aria-describedby="viewer-caption" />
+    <button class="viewer-next" type="button" aria-label="Next photograph" title="Next">›</button>
+    <div class="viewer-meta">
+      <span class="viewer-status" aria-live="polite"></span>
+      <span class="viewer-caption" id="viewer-caption"></span>
+    </div>
+  </div>
+
+  <script>
+    const gallery = document.querySelector("[data-photo-viewer]");
+    const viewer = document.querySelector(".viewer");
+    const viewerImage = viewer?.querySelector("img");
+    const viewerStatus = viewer?.querySelector(".viewer-status");
+    const viewerCaption = viewer?.querySelector(".viewer-caption");
+    const closeButton = viewer?.querySelector(".viewer-close");
+    const prevButton = viewer?.querySelector(".viewer-prev");
+    const nextButton = viewer?.querySelector(".viewer-next");
+    const buttons = Array.from(gallery?.querySelectorAll("[data-photo-index]") ?? []);
+    let current = 0;
+    let lastFocus: HTMLElement | null = null;
+    let pointerStart: number | null = null;
+
+    function show(index: number) {
+      const source = buttons[index]?.querySelector("img");
+      if (!source || !viewer || !viewerImage) return;
+      current = index;
+      viewerImage.src = source.src;
+      viewerImage.alt = source.alt;
+      if (viewerStatus) viewerStatus.textContent = `${index + 1} / ${buttons.length}`;
+      const caption = buttons[index]?.closest("figure")?.querySelector("figcaption span");
+      if (viewerCaption) viewerCaption.textContent = caption?.textContent ?? "";
+      viewer.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      [-1, 1].forEach((step) => {
+        const nearby =
+          buttons[(index + step + buttons.length) % buttons.length]?.querySelector("img");
+        if (nearby instanceof HTMLImageElement) {
+          const preload = new Image();
+          preload.src = nearby.src;
+        }
+      });
+      if (closeButton instanceof HTMLElement) closeButton.focus();
+    }
+
+    function close() {
+      viewer?.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      lastFocus?.focus();
+    }
+
+    function move(step: number) {
+      show((current + step + buttons.length) % buttons.length);
+    }
+
+    buttons.forEach((button, index) => {
+      button.addEventListener("click", () => {
+        lastFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        show(index);
+      });
+    });
+
+    closeButton?.addEventListener("click", close);
+    prevButton?.addEventListener("click", () => move(-1));
+    nextButton?.addEventListener("click", () => move(1));
+    viewer?.addEventListener("click", (event) => {
+      if (event.target === viewer) close();
+    });
+    viewer?.addEventListener("pointerdown", (event) => {
+      if (event instanceof PointerEvent) pointerStart = event.clientX;
+    });
+    viewer?.addEventListener("pointerup", (event) => {
+      if (!(event instanceof PointerEvent) || pointerStart === null) return;
+      const distance = event.clientX - pointerStart;
+      pointerStart = null;
+      if (Math.abs(distance) > 55) move(distance > 0 ? -1 : 1);
+    });
+    viewer?.addEventListener("pointercancel", () => {
+      pointerStart = null;
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (viewer?.getAttribute("aria-hidden") === "true") return;
+      if (event.key === "Escape") close();
+      if (event.key === "ArrowLeft") move(-1);
+      if (event.key === "ArrowRight") move(1);
+      if (event.key === "Tab") {
+        const focusables = [closeButton, prevButton, nextButton].filter(Boolean);
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          if (last instanceof HTMLElement) last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          if (first instanceof HTMLElement) first.focus();
+        }
+      }
+    });
+  </script>
+</BaseLayout>

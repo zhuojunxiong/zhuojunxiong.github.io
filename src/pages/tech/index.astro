@@ -1,0 +1,77 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { byDateDesc, formatDate, isPublished, slugFromId } from "../../utils/content";
+
+const posts = (await getCollection("tech")).filter(isPublished).sort(byDateDesc);
+---
+
+<BaseLayout
+  title="Technology"
+  description="Technical guides, working notes, explanations, and lessons gathered while building."
+  current="tech"
+>
+  <section class="page-hero">
+    <div class="section-inner page-hero-grid">
+      <div>
+        <p class="eyebrow">Tech Notes</p>
+        <h1>Technology</h1>
+      </div>
+      <div>
+        <p class="lead">
+          A record of how problems arise, how decisions take shape, and how a solution may be found
+          again when the road grows dim.
+        </p>
+        <p class="page-hero-note">
+          {posts.length} published {posts.length === 1 ? "note" : "notes"}. Drafts remain out of
+          sight.
+        </p>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-inner tech-list">
+      {
+        posts.map((post, index) => (
+          <article class="tech-card" data-reveal>
+            <span class="tech-index">{String(index + 1).padStart(2, "0")}</span>
+            <div>
+              <div class="meta">
+                <span>{formatDate(post.data.publishedDate)}</span>
+                {post.data.series && <span>{post.data.series}</span>}
+                {post.data.difficulty && <span>{post.data.difficulty}</span>}
+              </div>
+              <h2>
+                <a href={`/tech/${slugFromId(post.id)}/`}>{post.data.title}</a>
+              </h2>
+              <p>{post.data.description}</p>
+              <div class="tags">
+                {post.data.tags.map((tag) => (
+                  <span>{tag}</span>
+                ))}
+              </div>
+            </div>
+            {post.data.cover ? (
+              <a class="tech-cover" href={`/tech/${slugFromId(post.id)}/`}>
+                <img
+                  src={post.data.cover}
+                  alt={post.data.coverAlt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+            ) : (
+              <a
+                class="tech-glyph"
+                href={`/tech/${slugFromId(post.id)}/`}
+                aria-label={`Read ${post.data.title}`}
+              >
+                {post.data.tags[0]?.slice(0, 1) ?? "T"}
+              </a>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

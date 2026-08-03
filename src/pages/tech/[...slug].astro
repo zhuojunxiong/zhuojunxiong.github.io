@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from "astro:content";
+import TechPostLayout from "../../layouts/TechPostLayout.astro";
+import { byDateDesc, isPublished, neighbors, slugFromId } from "../../utils/content";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("tech")).filter(isPublished).sort(byDateDesc);
+  return posts.map((entry) => {
+    const slug = slugFromId(entry.id);
+    const { previous, next } = neighbors(posts, slug);
+    const firstTag = entry.data.tags[0];
+    const related = posts
+      .filter((item) => slugFromId(item.id) !== slug && item.data.tags.includes(firstTag))
+      .slice(0, 3);
+    return { params: { slug }, props: { entry, previous, next, related } };
+  });
+}
+
+const { entry, previous, next, related } = Astro.props;
+const rendered = await render(entry);
+---
+
+<TechPostLayout
+  entry={entry}
+  Content={rendered.Content}
+  headings={rendered.headings}
+  previous={previous}
+  next={next}
+  related={related}
+/>

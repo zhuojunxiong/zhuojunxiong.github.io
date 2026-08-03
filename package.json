@@ -1,0 +1,28 @@
+{
+  "name": "zhuojunxiong.github.io",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && node scripts/validate-content.mjs && astro build && node scripts/check-dist.mjs",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format:check": "prettier --check .",
+    "validate:content": "node scripts/validate-content.mjs",
+    "validate:dist": "node scripts/check-dist.mjs",
+    "gallery:new": "node scripts/create-gallery.mjs",
+    "copyright:embed": "node scripts/embed-copyright.mjs",
+    "verify": "npm run format:check && npm run build"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.12",
+    "astro": "^7.1.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "prettier": "^3.3.3",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.5.4"
+  }
+}

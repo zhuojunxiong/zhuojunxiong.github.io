@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../site.config";
+---
+
+<BaseLayout
+  title="About"
+  description="A few words about Liuwuxin and this quiet, independent place for making and noticing."
+  current="about"
+  image="/images/photography/winter-jiuzhaigou/11.jpg"
+  imageAlt="Sunlight passing between the trunks of a winter forest"
+>
+  <section class="page-hero about-hero">
+    <div class="section-inner page-hero-grid">
+      <div>
+        <p class="eyebrow">About</p>
+        <h1>About</h1>
+      </div>
+      <div></div>
+    </div>
+    <div class="about-portrait" data-reveal>
+      <img
+        src="/images/photography/winter-jiuzhaigou/11.jpg"
+        alt="Sunlight passing between the trunks of a winter forest"
+        width="1080"
+        height="1620"
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-inner about-grid">
+      <aside class="about-aside" data-reveal>
+        <p>{siteConfig.name}</p>
+        <p>{siteConfig.tagline}</p>
+        <blockquote class="about-credo" aria-label="A personal credo">
+          <p class="about-credo-opening">Don’t be discouraged.</p>
+          <p class="about-credo-main">Love real people, and devote yourself to real things.</p>
+        </blockquote>
+        <div class="about-aside-links">
+          <a href={siteConfig.github} rel="me">GitHub</a>
+        </div>
+      </aside>
+      <div class="about-copy" data-reveal>
+        <div class="poem-container">
+          <div class="poem-ornament" aria-hidden="true">&#x2734;</div>
+          <h2 class="poem-title">September</h2>
+          <p class="poem-author">Hai Zi · 1986</p>
+          <blockquote class="poem-body">
+            <p>
+              Across the grassland where I witnessed the death of gods,<br />
+              wildflowers stretch in bloom.
+            </p>
+            <p>
+              The wind in the farthest distance<br />
+              is farther still than distance itself.
+            </p>
+            <p>
+              My music sobs;<br />
+              my tears are spent.
+            </p>
+            <p>
+              I return the far within the faraway<br />
+              to the grassland.
+            </p>
+            <p>
+              One is called Horsehead,<br />
+              the other Horsetail.
+            </p>
+            <p>
+              My music sobs;<br />
+              my tears are spent.
+            </p>
+            <p>
+              Only in death does the faraway gather—<br />
+              into a boundless field of wildflowers.
+            </p>
+            <p>
+              The moon, a mirror suspended high above the grassland,<br />
+              shines upon a thousand years of passing time.
+            </p>
+            <p>
+              My music sobs;<br />
+              my tears are spent.
+            </p>
+            <p>
+              Alone, I ride on horseback<br />
+              across the grassland.
+            </p>
+          </blockquote>
+          <p class="poem-credit">English translation by Liuwuxin</p>
+          <div class="poem-ornament" aria-hidden="true">&#x2734;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

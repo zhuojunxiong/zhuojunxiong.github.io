@@ -1,0 +1,76 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../site.config";
+import { byDateDesc, formatDate, isPublished, slugFromId } from "../utils/content";
+
+const techPosts = (await getCollection("tech")).filter(isPublished).sort(byDateDesc);
+const articles = (await getCollection("articles")).filter(isPublished).sort(byDateDesc);
+const galleries = (await getCollection("photography")).filter(isPublished).sort(byDateDesc);
+
+const updates = [
+  ...techPosts.map((entry) => ({
+    type: "Technology",
+    title: entry.data.title,
+    date: entry.data.publishedDate,
+    href: `/tech/${slugFromId(entry.id)}/`,
+  })),
+  ...articles.map((entry) => ({
+    type: "Essay",
+    title: entry.data.title,
+    date: entry.data.publishedDate,
+    href: `/articles/${slugFromId(entry.id)}/`,
+  })),
+  ...galleries.map((entry) => ({
+    type: "Photography",
+    title: entry.data.title,
+    date: entry.data.date,
+    href: `/photography/${entry.id.replace(/\.json$/, "")}/`,
+  })),
+]
+  .sort((a, b) => Number(b.date) - Number(a.date))
+  .slice(0, 5);
+---
+
+<BaseLayout
+  title={siteConfig.name}
+  description={siteConfig.description}
+  current="home"
+  image={siteConfig.heroImage}
+  imageAlt="Snow falling between a blue-green lake and a winter forest"
+>
+  <section class="hero hero-compact" aria-labelledby="home-title">
+    <img
+      src={siteConfig.heroImage}
+      alt="Snow falling between a blue-green lake and a winter forest"
+      width="1620"
+      height="1080"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+    <div class="hero-content">
+      <h1 id="home-title">{siteConfig.name}</h1>
+      <p class="lead">{siteConfig.tagline}</p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="updates-title">
+    <div class="section-inner">
+      <div class="updates-header" data-reveal>
+        <p class="eyebrow">Recently published</p>
+      </div>
+      <div class="updates" data-reveal>
+        {
+          updates.map((item) => (
+            <a class="update-row" href={item.href}>
+              <span class="update-type">{item.type}</span>
+              <strong>{item.title}</strong>
+              <span class="update-date">{formatDate(item.date)}</span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
